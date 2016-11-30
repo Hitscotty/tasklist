@@ -54,4 +54,32 @@ router.delete('/task/:id', (req, res, next) => {
     });
 });
 
+router.put('/task/:id', (req, res, next) => {
+    var task = req.body;
+    var updTask = {};
+    if(task.isDone){
+        updTask.isDone = task.isDone;
+    }
+
+    if(task.title){
+        updTask.title = task.title;
+    }
+
+    if(!updTask){
+        res.status(400);
+        res.json({
+            "error": "bad data"
+        });
+
+    } else {
+        db.tasks.update({_id: mongojs.ObjectId(req.params.id)}, updTask, {}, (err,task) => {
+
+            if(err){
+                res.send(err);
+            }
+            res.json(task);
+        });
+    }
+});
+
 module.exports = router; 
